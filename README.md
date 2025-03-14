@@ -1,6 +1,6 @@
 <h1 align="center" id="title">TherAIpist - AI Chatbot for Mental Health Support</h1>
 
-<p id="description">TherAIpist is an AI-powered chatbot designed to provide mental health support. It helps users assess their mental well-being by asking relevant questions about their mood and behaviors. Based on the responses it estimates the likelihood of conditions like depression suicidal thoughts and schizophrenia. After the assessment the chatbot provides a safe and private environment for users to engage in further conversation and receive emotional support.</p>
+<p id="description">TherAIpist is an AI-powered chatbot designed to provide mental health support for students and working professionals. It helps users assess their mental well-being by asking relevant questions about their stress levels and behaviors. Based on the responses it estimates the likelihood of conditions like depression and suicidal thoughts. After the assessment the chatbot provides a safe and private environment for users to engage in further conversation and receive emotional support.</p>
 
   
   
