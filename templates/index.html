@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TherAIpist</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.4.1/socket.io.js"></script>
+    <script src="https://kit.fontawesome.com/1c42d02712.js" crossorigin="anonymous"></script>
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: #121212;
+            color: #E4E4E4;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .chat-container {
+            width: 450px;
+            height: 600px;
+            background: #1e1e1e;
+            border-radius: 12px;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            border: 1px solid #333;
+        }
+        .chat-box {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            background: #121212;
+            scrollbar-width: thin;
+            scrollbar-color: #555 #1e1e1e;
+        }
+        .input-box {
+            display: flex;
+            padding: 15px;
+            border-top: 1px solid #333;
+            background: #1c1c1c;
+        }
+        input {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            border-radius: 10px;
+            background: #333;
+            color: #E4E4E4;
+            font-size: 16px;
+            outline: none;
+        }
+        button {
+            padding: 12px;
+            background: #4caf50;
+            border: none;
+            border-radius: 10px;
+            margin-left: 10px;
+            cursor: pointer;
+            color: white;
+            font-weight: bold;
+            font-size: 16px;
+        }
+        .message {
+            padding: 12px;
+            border-radius: 10px;
+            max-width: 80%;
+            word-wrap: break-word;
+            font-size: 16px;
+            line-height: 1.5;
+        }
+        .user {
+            background: #5c6bc0; 
+            align-self: flex-end; 
+            color: #fff; 
+        }
+        .bot { 
+            background: #2c3e50; 
+            color: #fff; 
+            align-self: flex-start; 
+        }
+    </style>
+</head>
+<body>
+    <div class="chat-container">
+        <div class="chat-box" id="chatBox"></div>
+        <div class="input-box">
+            <input type="text" id="userInput" placeholder="Type a message..." onkeypress="handleKeyPress(event)">
+            <button class="send" onclick="sendMessage()"><i class="fa fa-paper-plane"></i> Send</button>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            var chatBox = document.getElementById("chatBox");
+            var botMessage = document.createElement("div");
+            botMessage.classList.add("message", "bot");
+            botMessage.innerHTML = `Welcome to <strong>TherAIpist</strong>! Use /start to begin a conversation!`;
+            chatBox.appendChild(botMessage);
+
+            chatBox.scrollTop = chatBox.scrollHeight;
+        })
+        var socket = io();
+
+        function sendMessage() {
+            var input = document.getElementById("userInput");
+            var message = input.value.trim();
+            if (message === "") return;
+
+            var chatBox = document.getElementById("chatBox");
+            var userMessage = document.createElement("div");
+            userMessage.classList.add("message", "user");
+            userMessage.innerHTML = `<strong>You:</strong> ${message}`;
+            chatBox.appendChild(userMessage);
+            input.value = "";
+
+            socket.emit("message", message);
+
+            chatBox.scrollTop = chatBox.scrollHeight;
+        }
+
+        function handleKeyPress(event) {
+            if (event.key === "Enter") {
+                sendMessage();
+            }
+        }
+
+        socket.on("response", function(data) {
+            var chatBox = document.getElementById("chatBox");
+            var botMessage = document.createElement("div");
+            botMessage.classList.add("message", "bot");
+            botMessage.innerHTML = `<strong>Bot:</strong> ${data}`;
+            chatBox.appendChild(botMessage);
+
+            chatBox.scrollTop = chatBox.scrollHeight;
+        });
+    </script>
+</body>
+</html>
