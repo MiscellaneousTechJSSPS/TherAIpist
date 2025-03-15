@@ -42,11 +42,16 @@ prompt_template = PromptTemplate(
 )
 
 def remove_repeated_text(response):
-    # Strip extra spaces and remove repeated sentences or words
-    response = " ".join(response.split())
-    pattern = re.compile(r"(.*?)(\s*\1)+", re.DOTALL)
-    response = pattern.sub(r"\1", response).strip()
-    return response
+    response = re.sub(r'\s+', ' ', response).strip()
+    seen = set()
+    filtered_words = []
+    
+    for word in response.split():
+        if word not in seen:
+            seen.add(word)
+            filtered_words.append(word)
+    
+    return " ".join(filtered_words)
 
 question_order = [
     "Gender", "Age", "City", "Profession", "Academic Pressure", "Work Pressure",
