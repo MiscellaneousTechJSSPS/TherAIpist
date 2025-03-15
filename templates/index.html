@@ -7,6 +7,11 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.4.1/socket.io.js"></script>
     <script src="https://kit.fontawesome.com/1c42d02712.js" crossorigin="anonymous"></script>
     <style>
+        @keyframes dots {
+            0% { content: "."; }
+            33% { content: ".."; }
+            66% { content: "..."; }
+        }
         body {
             font-family: 'Roboto', sans-serif;
             background-color: #121212;
@@ -83,6 +88,15 @@
             color: #fff; 
             align-self: flex-start; 
         }
+        .thinking {
+            font-style: italic;
+            color: #aaa;
+            align-self: flex-start;
+        }
+        .thinking::after {
+            content: ".";
+            animation: dots 1.5s infinite steps(3);
+        }
     </style>
 </head>
 <body>
@@ -99,12 +113,13 @@
             var chatBox = document.getElementById("chatBox");
             var botMessage = document.createElement("div");
             botMessage.classList.add("message", "bot");
-            botMessage.innerHTML = `Welcome to <strong>TherAIpist</strong>! Use /start to begin a conversation!`;
+            botMessage.innerHTML = `Welcome to <strong>TherAIpist</strong>! I'm ready to help when you're feeling down. Use /start to begin a questionaire session to assess your mental health or start chatting directly with the bot!`;
             chatBox.appendChild(botMessage);
-
             chatBox.scrollTop = chatBox.scrollHeight;
-        })
+        });
+
         var socket = io();
+        var thinkingIndicator = null;
 
         function sendMessage() {
             var input = document.getElementById("userInput");
@@ -118,8 +133,9 @@
             chatBox.appendChild(userMessage);
             input.value = "";
 
-            socket.emit("message", message);
+            showThinkingIndicator();
 
+            socket.emit("message", message);
             chatBox.scrollTop = chatBox.scrollHeight;
         }
 
@@ -129,11 +145,29 @@
             }
         }
 
+        function showThinkingIndicator() {
+            var chatBox = document.getElementById("chatBox");
+            thinkingIndicator = document.createElement("div");
+            thinkingIndicator.classList.add("message", "thinking");
+            thinkingIndicator.innerText = "TherAIpist is thinking";
+            chatBox.appendChild(thinkingIndicator);
+            chatBox.scrollTop = chatBox.scrollHeight;
+        }
+
+        function hideThinkingIndicator() {
+            if (thinkingIndicator) {
+                thinkingIndicator.remove();
+                thinkingIndicator = null;
+            }
+        }
+
         socket.on("response", function(data) {
+            hideThinkingIndicator();
+            
             var chatBox = document.getElementById("chatBox");
             var botMessage = document.createElement("div");
             botMessage.classList.add("message", "bot");
-            botMessage.innerHTML = `<strong>Bot:</strong> ${data}`;
+            botMessage.innerHTML = `<strong>TherAIpist:</strong> ${data}`;
             chatBox.appendChild(botMessage);
 
             chatBox.scrollTop = chatBox.scrollHeight;
